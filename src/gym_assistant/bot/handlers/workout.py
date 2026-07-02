@@ -8,6 +8,8 @@ from aiogram.types import CallbackQuery, Message
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
 from gym_assistant.bot.formatters.workout import (
+    format_rpe_prompt,
+    format_session_completed,
     format_warmup_message,
     format_weights_saved,
     format_workout_sheet,
@@ -15,13 +17,16 @@ from gym_assistant.bot.formatters.workout import (
 from gym_assistant.bot.keyboards.day_selection import build_day_keyboard
 from gym_assistant.bot.states.workout import WorkoutStates
 from gym_assistant.domain.exceptions import (
+    InvalidRPEError,
     InvalidWeightCountError,
     InvalidWeightFormatError,
     RoutineNotFoundError,
+    SessionNotFoundError,
 )
 from gym_assistant.infrastructure.database.models.user import UserModel
 from gym_assistant.services.routine_service import RoutineService
 from gym_assistant.services.workout_service import WorkoutService
+from gym_assistant.utils.rpe import parse_rpe
 from gym_assistant.utils.weights import parse_weights_message
 
 logger = logging.getLogger(__name__)
@@ -91,10 +96,12 @@ async def on_day_selected(
 
     async with session_factory() as session:
         workout_service = WorkoutService(session)
+        weight_infos = await workout_service.get_weight_info_for_day(db_user.id, day)
         training_session = await workout_service.start_session(
             user_id=db_user.id,
             routine=routine_service.routine,
             day=day,
+            weight_infos=weight_infos,
         )
         session_id = training_session.id
         await session.commit()
@@ -103,7 +110,7 @@ async def on_day_selected(
     await callback.message.edit_reply_markup(reply_markup=None)
 
     await callback.message.answer(format_warmup_message(warmup))
-    await callback.message.answer(format_workout_sheet(day))
+    await callback.message.answer(format_workout_sheet(day, weight_infos))
 
     await state.update_data(
         day_key=day_key,
@@ -169,5 +176,55 @@ async def on_weights_received(
         return
 
     await message.answer(format_weights_saved(saved))
+    await message.answer(format_rpe_prompt())
     await state.set_state(WorkoutStates.awaiting_rpe)
     logger.info("Pesos guardados: session_id=%d, count=%d", session_id, len(saved))
+
+
+@router.message(WorkoutStates.awaiting_rpe, F.text)
+async def on_rpe_received(
+    message: Message,
+    state: FSMContext,
+    routine_service: RoutineService,
+    session_factory: async_sessionmaker,
+) -> None:
+    if message.text is None:
+        return
+
+    text = message.text.strip()
+    if text.lower() in FINISHED_KEYWORDS:
+        await message.answer("Indicá el esfuerzo general con un número del 1 al 10.")
+        return
+
+    data = await state.get_data()
+    session_id = data.get("session_id")
+    day_key = data.get("day_key")
+
+    if session_id is None or day_key is None:
+        await message.answer("Error interno. Enviá gym para empezar de nuevo.")
+        await state.clear()
+        return
+
+    try:
+        rpe = parse_rpe(text)
+    except InvalidRPEError:
+        logger.warning("RPE inválido recibido: %s", text)
+        await message.answer("El esfuerzo debe ser un número entre <b>1</b> y <b>10</b>.")
+        return
+
+    try:
+        async with session_factory() as session:
+            workout_service = WorkoutService(session)
+            summary = await workout_service.complete_session(session_id, rpe)
+            await session.commit()
+    except SessionNotFoundError:
+        await message.answer("No encontré la sesión. Enviá gym para empezar de nuevo.")
+        await state.clear()
+        return
+
+    day = routine_service.get_day(day_key)
+    await message.answer(
+        format_session_completed(day.name, summary.session_rpe, summary.exercises)
+    )
+    await state.clear()
+    logger.info("Sesión finalizada: session_id=%d, rpe=%d", session_id, rpe)

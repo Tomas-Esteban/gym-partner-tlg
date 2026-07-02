@@ -45,3 +45,20 @@ class ExerciseLog:
     reps_planned: str
     suggested_weight_kg: float | None
     weight_kg: float | None
+
+
+@dataclass
+class SessionSummary:
+    day_key: str
+    session_rpe: int
+    exercises: list[tuple[str, float]]
+
+
+@dataclass
+class ExerciseWeightInfo:
+    exercise_key: str
+    exercise_name: str
+    sets: int
+    reps: str
+    last_weight_kg: float | None
+    suggested_weight_kg: float | None

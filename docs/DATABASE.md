@@ -58,16 +58,12 @@ Pares clave-valor por usuario (ej: `last_completed_day_key`).
 
 ### progression_tracking
 
-| Columna | Tipo | Descripción |
-|---------|------|-------------|
-| id | INTEGER PK | |
-| user_id | INTEGER FK → users | |
-| exercise_key | VARCHAR | Clave del ejercicio |
-| week_start | DATE | Inicio de semana |
-| avg_session_rpe | FLOAT | RPE promedio de la semana |
-| current_weight_kg | FLOAT | Peso actual |
-| weeks_at_current_weight | INTEGER | Semanas en peso actual |
-| updated_at | DATETIME | Última actualización |
+Motor de progresión (etapa 8). Se actualiza al completar cada sesión:
+
+- `week_start`: lunes de la semana de la sesión
+- `avg_session_rpe`: promedio de RPE de sesiones completadas esa semana
+- `weeks_at_current_weight`: semanas consecutivas (con actividad) en el mismo peso
+- Usado para calcular `suggested_weight` en la hoja de entrenamiento
 
 ## Migraciones
 

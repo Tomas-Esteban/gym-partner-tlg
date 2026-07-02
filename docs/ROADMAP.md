@@ -8,9 +8,9 @@
 - [x] **Etapa 3** — Bot skeleton (Telegram básico)
 - [x] **Etapa 4** — Flujo de entrenamiento (selección de día + hoja)
 - [x] **Etapa 5** — Registro de pesos
-- [ ] **Etapa 6** — RPE y cierre de sesión
-- [ ] **Etapa 7** — Historial y últimos pesos
-- [ ] **Etapa 8** — Motor de progresión
+- [x] **Etapa 6** — RPE y cierre de sesión
+- [x] **Etapa 7** — Historial y últimos pesos
+- [x] **Etapa 8** — Motor de progresión
 
 ## Post-MVP
 

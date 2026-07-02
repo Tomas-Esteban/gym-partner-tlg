@@ -36,3 +36,7 @@ class InvalidWeightFormatError(GymAssistantError):
 
 class InvalidRPEError(GymAssistantError):
     """RPE fuera del rango válido (1-10)."""
+
+    def __init__(self, value: str) -> None:
+        self.value = value
+        super().__init__(f"RPE inválido: {value}")

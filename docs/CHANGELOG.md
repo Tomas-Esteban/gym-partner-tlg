@@ -12,3 +12,6 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/).
 - Bot skeleton de Telegram con registro automático de usuarios
 - Flujo `gym`: selección de día, calentamiento y hoja de ejercicios
 - Registro de pesos multilínea con validación y persistencia en SQLite
+- Captura de RPE de sesión y cierre de entrenamiento con resumen final
+- Hoja de entrenamiento con último peso y peso sugerido por ejercicio
+- Motor de progresión basado en RPE semanal e incrementos configurables en YAML
