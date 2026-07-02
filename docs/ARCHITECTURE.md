@@ -24,9 +24,23 @@ Telegram → Handler → Service → Repository → SQLite
 ## FSM del entrenamiento
 
 ```
-Idle → AwaitingDay → ShowingWorkout → AwaitingWeights → AwaitingRPE → Completed
+Idle → AwaitingDay → AwaitingWeights → AwaitingRPE → Completed
          ↑_______________ cancelar en cualquier estado _______________↓
 ```
+
+### Etapa 4 (implementado)
+
+- Comando `gym` detecta el próximo día sugerido según historial
+- Teclado inline para elegir cualquier día de la rutina
+- Muestra calentamiento (`upper` / `lower`) según el día
+- Envía la hoja completa de ejercicios en un mensaje
+
+### Etapa 5 (implementado)
+
+- Sesión `in_progress` creada al elegir día, con `exercise_logs` vacíos
+- Parseo de pesos multilínea (uno por línea, en orden)
+- Validación de cantidad y formato; reintento sin perder estado
+- `/cancelar` descarta sesión en DB y limpia FSM
 
 ## Rutinas YAML
 

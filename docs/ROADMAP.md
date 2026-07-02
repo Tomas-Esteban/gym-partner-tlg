@@ -6,8 +6,8 @@
 - [x] **Etapa 1** — Base de datos y configuración
 - [x] **Etapa 2** — Cargador de rutinas YAML
 - [x] **Etapa 3** — Bot skeleton (Telegram básico)
-- [ ] **Etapa 4** — Flujo de entrenamiento (selección de día + hoja)
-- [ ] **Etapa 5** — Registro de pesos
+- [x] **Etapa 4** — Flujo de entrenamiento (selección de día + hoja)
+- [x] **Etapa 5** — Registro de pesos
 - [ ] **Etapa 6** — RPE y cierre de sesión
 - [ ] **Etapa 7** — Historial y últimos pesos
 - [ ] **Etapa 8** — Motor de progresión

@@ -10,3 +10,5 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/).
 - Base de datos SQLite con SQLAlchemy y Alembic
 - Cargador de rutinas YAML con validación Pydantic
 - Bot skeleton de Telegram con registro automático de usuarios
+- Flujo `gym`: selección de día, calentamiento y hoja de ejercicios
+- Registro de pesos multilínea con validación y persistencia en SQLite
