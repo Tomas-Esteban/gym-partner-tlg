@@ -1,0 +1,144 @@
+name: "Rutina 4 días"
+version: "2026-Q1"
+cycle_days: 4
+
+days:
+  - key: day_1
+    name: "Día 1 — Pecho y Tríceps"
+    warmup: upper
+    exercises:
+      - key: bench_press
+        name: "Press banca"
+        sets: 4
+        reps: "8-10"
+        progression:
+          increment_kg: 2.5
+      - key: incline_dumbbell_press
+        name: "Press inclinado con mancuernas"
+        sets: 3
+        reps: "10-12"
+        progression:
+          increment_kg: 2.5
+      - key: cable_fly
+        name: "Aperturas en polea"
+        sets: 3
+        reps: "12-15"
+        progression:
+          increment_kg: 2.5
+      - key: tricep_pushdown
+        name: "Pushdown tríceps"
+        sets: 3
+        reps: "12"
+        progression:
+          increment_kg: 2.5
+      - key: overhead_tricep_extension
+        name: "Extensión de tríceps overhead"
+        sets: 3
+        reps: "10-12"
+        progression:
+          increment_kg: 2.5
+
+  - key: day_2
+    name: "Día 2 — Espalda y Bíceps"
+    warmup: upper
+    exercises:
+      - key: pull_ups
+        name: "Dominadas"
+        sets: 4
+        reps: "8-10"
+        progression:
+          increment_kg: 0
+      - key: barbell_row
+        name: "Remo con barra"
+        sets: 4
+        reps: "8"
+        progression:
+          increment_kg: 2.5
+      - key: lat_pulldown
+        name: "Jalón al pecho"
+        sets: 3
+        reps: "10-12"
+        progression:
+          increment_kg: 2.5
+      - key: barbell_curl
+        name: "Curl con barra"
+        sets: 3
+        reps: "10"
+        progression:
+          increment_kg: 2.5
+      - key: hammer_curl
+        name: "Curl martillo"
+        sets: 3
+        reps: "12"
+        progression:
+          increment_kg: 2.5
+
+  - key: day_3
+    name: "Día 3 — Piernas"
+    warmup: lower
+    exercises:
+      - key: barbell_squat
+        name: "Sentadilla con barra"
+        sets: 4
+        reps: "6-8"
+        progression:
+          increment_kg: 5.0
+      - key: romanian_deadlift
+        name: "Peso muerto rumano"
+        sets: 3
+        reps: "8-10"
+        progression:
+          increment_kg: 5.0
+      - key: leg_press
+        name: "Prensa de piernas"
+        sets: 3
+        reps: "10-12"
+        progression:
+          increment_kg: 10.0
+      - key: leg_curl
+        name: "Curl femoral"
+        sets: 3
+        reps: "12"
+        progression:
+          increment_kg: 2.5
+      - key: calf_raise
+        name: "Elevación de gemelos"
+        sets: 4
+        reps: "15"
+        progression:
+          increment_kg: 2.5
+
+  - key: day_4
+    name: "Día 4 — Hombros y Core"
+    warmup: upper
+    exercises:
+      - key: overhead_press
+        name: "Press militar"
+        sets: 4
+        reps: "8-10"
+        progression:
+          increment_kg: 2.5
+      - key: lateral_raise
+        name: "Elevaciones laterales"
+        sets: 3
+        reps: "12-15"
+        progression:
+          increment_kg: 2.5
+      - key: face_pull
+        name: "Face pull"
+        sets: 3
+        reps: "15"
+        progression:
+          increment_kg: 2.5
+      - key: plank
+        name: "Plancha"
+        sets: 3
+        reps: "60s"
+        progression:
+          increment_kg: 0
+      - key: hanging_leg_raise
+        name: "Elevación de piernas colgado"
+        sets: 3
+        reps: "12"
+        progression:
+          increment_kg: 0
