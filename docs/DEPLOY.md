@@ -1,60 +1,147 @@
-# Despliegue
+# Despliegue con Docker
 
-## Requisitos en producción
+Guía para correr Gym Assistant en otra PC (Windows, macOS o Linux) con Docker y dejarlo funcionando 24/7.
 
-- Docker Desktop (Windows o macOS)
-- Archivo `.env` con `BOT_TOKEN` válido
-- Acceso a internet (polling de Telegram)
+## Requisitos en la PC de producción
 
-## Despliegue con Docker Compose
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado y en ejecución
+- Token del bot de Telegram ([@BotFather](https://t.me/BotFather))
+- Conexión a internet (el bot usa polling de Telegram)
+
+## Despliegue desde cero
+
+### 1. Obtener el proyecto
 
 ```bash
-# Desde la raíz del proyecto
+git clone https://github.com/Tomas-Esteban/gym-partner-tlg.git
+cd gym-partner-tlg
+git checkout develop
+```
+
+O copiá la carpeta del proyecto a la otra PC (USB, red, etc.).
+
+### 2. Configurar variables de entorno
+
+```bash
 cp .env.example .env
-# Editar .env
-
-docker compose -f docker/docker-compose.yml up -d --build
 ```
 
-## Volúmenes
+Editá `.env` y poné tu token real:
 
-El directorio `data/` se monta como volumen:
+```env
+BOT_TOKEN=7123456789:AAHtu_token_real_aqui
+DATABASE_URL=sqlite:///data/gym_assistant.db
+ROUTINES_PATH=data/routines
+LOG_LEVEL=INFO
+PROGRESSION_WEEKS_THRESHOLD=3
+PROGRESSION_RPE_THRESHOLD=8.0
+```
 
-- `data/gym_assistant.db` — base de datos SQLite
-- `data/routines/` — archivos YAML de rutinas
+**Importante:** nunca subas `.env` a GitHub (ya está en `.gitignore`).
 
-Para actualizar la rutina, reemplazar los YAML en `data/routines/` y reiniciar el contenedor.
+### 3. Levantar el bot
 
-## Logs
+Desde la **raíz del proyecto**:
 
 ```bash
-docker compose -f docker/docker-compose.yml logs -f bot
+docker compose up -d --build
 ```
 
-## Reiniciar
+Esto:
+- Construye la imagen
+- Aplica migraciones de DB al arrancar
+- Deja el contenedor corriendo en segundo plano
+- Reinicia automáticamente si la PC se reinicia (`restart: unless-stopped`)
+
+### 4. Verificar que funciona
 
 ```bash
-docker compose -f docker/docker-compose.yml restart bot
+docker compose logs -f bot
 ```
 
-## Actualizar
+Deberías ver algo como:
+
+```
+Bot starting...
+Database migrations applied
+Rutina cargada: Rutina Actual v2026-07 (4 días)
+Bot ready, polling started
+```
+
+Probá en Telegram: `/start` → `gym`
+
+## Comandos útiles
+
+| Acción | Comando |
+|--------|---------|
+| Ver logs en vivo | `docker compose logs -f bot` |
+| Detener el bot | `docker compose down` |
+| Reiniciar | `docker compose restart bot` |
+| Reconstruir tras cambios | `docker compose up -d --build` |
+| Estado del contenedor | `docker compose ps` |
+
+## Datos persistentes
+
+La carpeta `data/` se monta como volumen:
+
+| Ruta | Contenido |
+|------|-----------|
+| `data/gym_assistant.db` | Base de datos (historial, pesos, usuarios) |
+| `data/routines/routine.yaml` | Tu rutina activa |
+| `data/routines/warmups/` | Calentamientos |
+
+Si borrás el contenedor, **los datos en `data/` se conservan**.
+
+Para actualizar la rutina: editá los YAML en `data/routines/` y ejecutá `docker compose restart bot`.
+
+## Windows (Docker Desktop)
+
+1. Instalá Docker Desktop y activá WSL2 si te lo pide
+2. Abrí PowerShell o CMD en la carpeta del proyecto
+3. Los mismos comandos funcionan:
+
+```powershell
+copy .env.example .env
+# Editar .env con Notepad
+docker compose up -d --build
+docker compose logs -f bot
+```
+
+## Actualizar a una versión nueva
 
 ```bash
 git pull
-docker compose -f docker/docker-compose.yml up -d --build
+docker compose up -d --build
 ```
 
-## Migraciones en Docker
+Las migraciones de base de datos se aplican solas al reiniciar.
 
-```bash
-docker compose -f docker/docker-compose.yml exec bot alembic upgrade head
+## Solución de problemas
+
+| Problema | Solución |
+|----------|----------|
+| `BOT_TOKEN no está configurado` | Completá `BOT_TOKEN` en `.env` |
+| Error de validación YAML | Revisá formato de `data/routines/routine.yaml` |
+| El bot no responde | `docker compose logs -f bot` y verificá que esté `polling started` |
+| Puerto / red | No hace falta abrir puertos; el bot sale a internet por polling |
+
+## Arquitectura Docker
+
 ```
-
-## Multiplataforma
-
-El proyecto usa rutas relativas y volúmenes Docker. Funciona igual en:
-
-- macOS (desarrollo)
-- Windows (producción con Docker Desktop)
-
-No usar paths absolutos en configuración.
+┌─────────────────────────────────┐
+│  PC (Windows / macOS / Linux)   │
+│  ┌───────────────────────────┐  │
+│  │  gym-assistant-bot        │  │
+│  │  (Python 3.12 + aiogram)  │  │
+│  └───────────┬───────────────┘  │
+│              │ volumen           │
+│  ┌───────────▼───────────────┐  │
+│  │  ./data/                  │  │
+│  │  ├── gym_assistant.db     │  │
+│  │  └── routines/            │  │
+│  └───────────────────────────┘  │
+└─────────────────────────────────┘
+              │
+              ▼
+        Telegram API
+```

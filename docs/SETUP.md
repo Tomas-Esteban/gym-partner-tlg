@@ -54,8 +54,10 @@ gym-assistant
 
 ## Docker
 
+Desde la raíz del proyecto:
+
 ```bash
-docker compose -f docker/docker-compose.yml up --build
+docker compose up -d --build
 ```
 
-El volumen `data/` persiste la base de datos y las rutinas YAML entre reinicios.
+Ver [DEPLOY.md](DEPLOY.md) para despliegue completo en otra PC.

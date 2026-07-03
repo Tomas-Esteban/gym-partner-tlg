@@ -11,13 +11,26 @@ Asistente personal de gimnasio via bot de Telegram. Registra entrenamientos, rec
 - Multi-usuario (cada chat de Telegram es independiente)
 - Docker para despliegue multiplataforma
 
-## Inicio rápido
+## Inicio rápido con Docker (recomendado en producción)
 
 ```bash
 cp .env.example .env
 # Editar .env con tu BOT_TOKEN
 
-docker compose -f docker/docker-compose.yml up --build
+docker compose up -d --build
+docker compose logs -f bot
+```
+
+El bot queda corriendo en segundo plano. Ver [Despliegue](docs/DEPLOY.md) para instrucciones en otra PC (Windows incluido).
+
+## Desarrollo local (sin Docker)
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e .
+cp .env.example .env
+gym-assistant
 ```
 
 ## Documentación

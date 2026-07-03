@@ -15,3 +15,8 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/).
 - Captura de RPE de sesión y cierre de entrenamiento con resumen final
 - Hoja de entrenamiento con último peso y peso sugerido por ejercicio
 - Motor de progresión basado en RPE semanal e incrementos configurables en YAML
+
+### Changed
+
+- Docker: compose en raíz, entrypoint con validación de token y rutinas por defecto
+- Fix: middleware de usuario en callback_query para selección de día

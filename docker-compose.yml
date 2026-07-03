@@ -1,16 +1,16 @@
 services:
   bot:
     build:
-      context: ..
+      context: .
       dockerfile: docker/Dockerfile
     container_name: gym-assistant-bot
     env_file:
-      - ../.env
+      - .env
     environment:
       DATABASE_URL: sqlite:///data/gym_assistant.db
       ROUTINES_PATH: data/routines
     volumes:
-      - ../data:/app/data
+      - ./data:/app/data
     restart: unless-stopped
     logging:
       driver: json-file
