@@ -43,7 +43,9 @@ async def create_dispatcher(settings: Settings) -> Dispatcher:
     dp["session_factory"] = session_factory
     dp["settings"] = settings
 
-    dp.message.middleware(UserContextMiddleware(session_factory))
+    user_middleware = UserContextMiddleware(session_factory)
+    dp.message.middleware(user_middleware)
+    dp.callback_query.middleware(user_middleware)
 
     dp.include_router(start.router)
     dp.include_router(common.router)
